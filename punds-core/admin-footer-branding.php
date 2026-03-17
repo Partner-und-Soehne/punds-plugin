@@ -143,7 +143,7 @@ add_action('admin_footer', function() {
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: green;
+            background-color: black;
             color: #fff;
             padding: 12px 20px;
             display: flex;
