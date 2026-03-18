@@ -16,15 +16,12 @@ if (!defined('ABSPATH')) {
 add_action('login_enqueue_scripts', function() {
     ?>
     <style type="text/css">
-        body {
-            background-color: rgba(0,0,0,.05);
-        }
         .message.notice {
-            border-left: 4px solid black;
-            box-shadow: unset;
+            border-left: 4px solid black !important;
+            box-shadow: unset !important;
             border-radius: 4px;
         }
-        #loginform{
+        #loginform {
             background: transparent;
             border: none;
         }
@@ -36,8 +33,8 @@ add_action('login_enqueue_scripts', function() {
             height: 80px;
         }
         #login {
-            padding: 1rem;
-            margin-top: 5%;
+            padding: 1rem !important;
+            margin-top: 5% !important;
             border: 1px solid black;
             border-radius: 4px;
         }
@@ -45,11 +42,11 @@ add_action('login_enqueue_scripts', function() {
             float: unset;
         }
         .button-primary{
-            float: unset;
-            margin-top: 1rem;
+            float: unset !important;
+            margin-top: 1rem !important;
         }
         #wp-submit{
-            padding: .75rem 1.5rem;
+            padding: .25rem 1.5rem;
             border-radius: 2rem;
             border: 1px solid black;
             background-color: transparent;
@@ -72,8 +69,8 @@ add_action('login_enqueue_scripts', function() {
             box-shadow: 0 0 0 1px #000;
         }
         .wp-core-ui .button {
-            color: black;
-            border-color: black;
+            color: black !important;
+            border-color: black !important;
         }
         .wp-core-ui .button:hover {
             color: black;
