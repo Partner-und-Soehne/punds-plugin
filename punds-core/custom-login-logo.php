@@ -39,7 +39,7 @@ add_action('login_enqueue_scripts', function() {
             border-radius: 4px;
         }
         p.forgetmenot {
-            float: unset;
+            float: unset !important;
         }
         .button-primary{
             float: unset !important;
@@ -54,27 +54,30 @@ add_action('login_enqueue_scripts', function() {
             transition: background 300ms ease, color 300ms ease;
         }
         #wp-submit:hover{
-            background-color: black;
-            color: white;
+            background-color: black !important;
+            color: white !important;
         }
         .dashicons-visibility::before, .dashicons-hidden::before {
-            color: black;
+            color: black !important;
         }
         .login .button.wp-hide-pw:focus {
-            border-color: black;
-            box-shadow: 0 0 0 1px black;
+            border-color: black !important;
+            box-shadow: 0 0 0 1px black !important;
         }
         input[type="text"]:focus, input[type="password"]:focus {
-            border-color: black;
-            box-shadow: 0 0 0 1px #000;
+            border-color: black !important;
+            box-shadow: 0 0 0 1px #000 !important;
         }
         .wp-core-ui .button {
             color: black !important;
             border-color: black !important;
         }
         .wp-core-ui .button:hover {
-            color: black;
-            border-color: black;
+            color: black !important;
+            border-color: black !important;
+        }
+        .language-switcher {
+            margin-top: 2rem !important;
         }
 
     </style>
