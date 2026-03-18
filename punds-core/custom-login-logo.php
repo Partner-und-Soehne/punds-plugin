@@ -64,7 +64,10 @@ add_action('login_enqueue_scripts', function() {
             border-color: black !important;
             box-shadow: 0 0 0 1px black !important;
         }
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="checkbox"]:checked::before {
+            filter: brightness(0) grayscale(1) !important;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, input[type="checkbox"]:focus {
             border-color: black !important;
             box-shadow: 0 0 0 1px #000 !important;
         }
