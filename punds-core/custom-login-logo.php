@@ -24,6 +24,7 @@ add_action('login_enqueue_scripts', function() {
         #loginform {
             background: transparent;
             border: none;
+            box-shadow: none;
         }
         #login h1 a, .login h1 a {
             background-image: url(<?php echo PUNDS_CORE_URL; ?>assets/punds_logo.svg);
