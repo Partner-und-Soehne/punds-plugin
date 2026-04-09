@@ -187,6 +187,7 @@ add_action('login_enqueue_scripts', function() {
             padding: 0.4rem 1rem !important;
             border: 1px solid black;
             border-radius: 2rem;
+            color: black !important;
             text-decoration: none;
             font-size: 0.9rem;
             transition: background 300ms ease, color 300ms ease;
