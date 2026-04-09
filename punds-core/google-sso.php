@@ -196,7 +196,7 @@ add_action('login_enqueue_scripts', function() {
         }
         .punds-sso-button:hover {
             background: black;
-            color: white;
+            color: white !important;
         }
         .punds-sso-button:hover svg path[fill="#EA4335"],
         .punds-sso-button:hover svg path[fill="#4285F4"],
