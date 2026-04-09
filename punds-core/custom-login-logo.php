@@ -83,6 +83,9 @@ add_action('login_enqueue_scripts', function() {
         .language-switcher {
             margin-top: 2rem !important;
         }
+        .punds-sso-button {
+            margin-bottom: 1rem !important;
+        }
 
     </style>
     <?php
