@@ -68,7 +68,7 @@ add_action('login_form', function() {
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             <path fill="none" d="M0 0h48v48H0z"/>
         </svg>
-        Mit Google anmelden (Agentur)
+        Mit Google anmelden
     </a>
     <?php
 });
@@ -184,14 +184,13 @@ add_action('login_enqueue_scripts', function() {
             justify-content: center;
             gap: 0.6rem;
             width: 100%;
-            padding: 0.4rem 1rem;
+            padding: 0.4rem 1rem !important;
             border: 1px solid black;
             border-radius: 2rem;
-            background: transparent;
-            color: black;
             text-decoration: none;
             font-size: 0.9rem;
             transition: background 300ms ease, color 300ms ease;
+            margin-top: 1rem !important;
             box-sizing: border-box;
         }
         .punds-sso-button:hover {
