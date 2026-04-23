@@ -178,6 +178,9 @@ add_action('admin_footer', function() {
         body.wp-admin {
             padding-bottom: 50px;
         }
+        div#wpwrap {
+            margin-bottom: 50px;
+        }
         
         /* Adjust for mobile */
         @media screen and (max-width: 782px) {
@@ -195,11 +198,10 @@ add_action('admin_footer', function() {
     <div id="punds-admin-footer">
         <img src="<?php echo PUNDS_CORE_URL; ?>assets/punds_favicon.png" alt="Partner & Söhne Logo">
         <span>
-            Die Webseite wird durch 
+            Managed WordPress by 
             <a href="https://partnerundsoehne.de" target="_blank" rel="noopener noreferrer">
                 Partner &amp; Söhne
             </a> 
-            betreut
         </span>
     </div>
     <?php
