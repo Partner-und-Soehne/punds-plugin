@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Partner & Söhne — Core
+ * Plugin Name:       Partner & Söhne – Core
  * Plugin URI:        https://github.com/Partner-und-Soehne/punds-plugin
  * Description:       Loads all Partner & Söhne core functionality modules.
  * Version:           1.0.2
