@@ -153,6 +153,9 @@ add_action('admin_footer', function() {
             font-size: 14px;
             z-index: 99999;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            border-radius: 5px 5px 0px 0px;
+            margin: auto;
         }
         
         #punds-admin-footer img {
