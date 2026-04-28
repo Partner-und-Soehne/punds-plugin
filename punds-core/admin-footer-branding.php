@@ -14,6 +14,24 @@ if (!defined('ABSPATH')) {
  * Add custom admin footer
  */
 add_action('admin_footer', function() {
+    function punds_admin_footer() {
+        $screen = get_current_screen();
+        
+        // Don't show on post/page editor screens
+        if ( $screen && in_array( $screen->base, [ 'post', 'site-editor', 'widgets' ] ) ) {
+            return;
+        }
+        
+        echo '<div id="punds-admin-footer">
+            <img src="<?php echo PUNDS_CORE_URL; ?>assets/punds_favicon.png" alt="Partner & Söhne Logo">
+            <span>
+                Managed WordPress by 
+                <a href="https://partnerundsoehne.de" target="_blank" rel="noopener noreferrer">
+                    Partner &amp; Söhne
+                </a> 
+            </span>
+        </div>';
+    }
     ?>
     <style type="text/css">
 		#adminmenu,
@@ -197,15 +215,6 @@ add_action('admin_footer', function() {
             }
         }
     </style>
-    
-    <div id="punds-admin-footer">
-        <img src="<?php echo PUNDS_CORE_URL; ?>assets/punds_favicon.png" alt="Partner & Söhne Logo">
-        <span>
-            Managed WordPress by 
-            <a href="https://partnerundsoehne.de" target="_blank" rel="noopener noreferrer">
-                Partner &amp; Söhne
-            </a> 
-        </span>
-    </div>
+
     <?php
 });
