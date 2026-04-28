@@ -9,7 +9,7 @@
  *   define('PUNDS_SSO_SHARED_SECRET', 'your-shared-secret');
  *
  * Optional override (defaults to production relay):
- *   define('PUNDS_SSO_RELAY_URL', 'https://sso.partnerundsoehne.de/oauth/callback');
+ *   define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback');
  *
  * @package PundsCore
  */
@@ -27,13 +27,15 @@ if (!defined('PUNDS_GOOGLE_CLIENT_ID') || !defined('PUNDS_SSO_SHARED_SECRET')) {
     return;
 }
 
-// --- Constants (safe to be public — no secrets here) ---
-define('PUNDS_SSO_RELAY_URL', defined('PUNDS_SSO_RELAY_URL')
-    ? PUNDS_SSO_RELAY_URL
-    : 'https://sso.partnerundsoehne.de/oauth/callback'
-);
-define('PUNDS_SSO_ALLOWED_DOMAIN', 'partnerundsoehne.de');
-define('PUNDS_SSO_TOKEN_TTL', 60); // seconds the return token stays valid
+if (!defined('PUNDS_SSO_RELAY_URL')) {
+    define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback');
+}
+if (!defined('PUNDS_SSO_ALLOWED_DOMAIN')) {
+    define('PUNDS_SSO_ALLOWED_DOMAIN', 'partnerundsoehne.de');
+}
+if (!defined ('PUNDS_SSO_TOKEN_TTL')) {
+    define('PUNDS_SSO_TOKEN_TTL', 60);
+}
 
 
 // -------------------------------------------------------
