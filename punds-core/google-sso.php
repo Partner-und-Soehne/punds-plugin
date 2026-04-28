@@ -24,7 +24,7 @@ if (!defined('PUNDS_GOOGLE_CLIENT_ID')) {
 }
 
 if (!defined('PUNDS_SSO_RELAY_URL')) {
-    define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback');
+    define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback.php');
 }
 if (!defined('PUNDS_SSO_PUBLIC_KEY')) {
     define('PUNDS_SSO_PUBLIC_KEY', 'fwTvW5G9KuSj392bqqKnIPrjkRejzqG0WdvVMq7V/9Y=');
