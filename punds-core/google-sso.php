@@ -42,10 +42,37 @@ if (!defined ('PUNDS_SSO_TOKEN_TTL')) {
 // PART A: Add "Login with Google" button to login page
 // -------------------------------------------------------
 
+add_action('login_init', function() {
+    // Only on the actual login screen, not lostpassword/register/etc.
+    $action = $_GET['action'] ?? 'login';
+    if (!in_array($action, ['login', ''], true)) {
+        return;
+    }
+
+    $nonce      = bin2hex(random_bytes(16));
+    $session_id = bin2hex(random_bytes(16));
+
+    set_transient('punds_sso_' . $nonce, $session_id, 10 * MINUTE_IN_SECONDS);
+    setcookie('punds_sso_session', $session_id, [
+        'expires'  => time() + 600,
+        'path'     => '/',
+        'secure'   => true,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+
+    $GLOBALS['punds_sso_nonce'] = $nonce;
+});
+
 add_action('login_form', function() {
+    $nonce = $GLOBALS['punds_sso_nonce'] ?? null;
+    if (!$nonce) {
+        return; // Safety: don't render button if init didn't run
+    }
+
     $state = base64_encode(json_encode([
         'return_url' => wp_login_url(),
-        'nonce'      => wp_create_nonce('punds-google-sso'),
+        'nonce'      => $nonce,
         'site'       => get_site_url(),
     ]));
 
@@ -55,7 +82,7 @@ add_action('login_form', function() {
         'response_type' => 'code',
         'scope'         => 'openid email profile',
         'state'         => $state,
-        'hd'            => PUNDS_SSO_ALLOWED_DOMAIN, // Hints Google to show only agency accounts
+        'hd'            => PUNDS_SSO_ALLOWED_DOMAIN,
         'prompt'        => 'select_account',
     ]);
     ?>
@@ -104,6 +131,19 @@ add_action('init', function() {
     if (!$payload || !isset($payload['email'], $payload['expires'])) {
         wp_die('SSO-Fehler: Ungültiges Token-Format.', 'SSO Fehler', ['response' => 400]);
     }
+
+    // Verify the nonce: must match a transient issued by THIS site for THIS browser
+    $nonce = $payload['nonce'] ?? '';
+    $expected_session = $nonce ? get_transient('punds_sso_' . $nonce) : false;
+    $actual_session   = $_COOKIE['punds_sso_session'] ?? '';
+
+    if (!$expected_session || !hash_equals($expected_session, $actual_session)) {
+        wp_die('SSO-Fehler: Ungültige oder abgelaufene Sitzung.', 'SSO Fehler', ['response' => 403]);
+    }
+
+    // Consume immediately — single-use
+    delete_transient('punds_sso_' . $nonce);
+    setcookie('punds_sso_session', '', ['expires' => time() - 3600, 'path' => '/']);
 
     // 3. Check token expiry
     if ($payload['expires'] < time()) {
