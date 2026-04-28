@@ -6,10 +6,6 @@
  * Requires the following constants to be defined in wp-config.php:
  *
  *   define('PUNDS_GOOGLE_CLIENT_ID',  'your-client-id');
- *   define('PUNDS_SSO_SHARED_SECRET', 'your-shared-secret');
- *
- * Optional override (defaults to production relay):
- *   define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback');
  *
  * @package PundsCore
  */
@@ -23,12 +19,15 @@ if (!defined('ABSPATH')) {
  * Only activate SSO if the required constants are defined in wp-config.php.
  * If they are missing, the plugin silently skips — the normal login still works.
  */
-if (!defined('PUNDS_GOOGLE_CLIENT_ID') || !defined('PUNDS_SSO_SHARED_SECRET')) {
+if (!defined('PUNDS_GOOGLE_CLIENT_ID')) {
     return;
 }
 
 if (!defined('PUNDS_SSO_RELAY_URL')) {
     define('PUNDS_SSO_RELAY_URL', 'https://management.partnerundsoehne.de/oauth/callback');
+}
+if (!defined('PUNDS_SSO_PUBLIC_KEY')) {
+    define('PUNDS_SSO_PUBLIC_KEY', 'fwTvW5G9KuSj392bqqKnIPrjkRejzqG0WdvVMq7V/9Y=');
 }
 if (!defined('PUNDS_SSO_ALLOWED_DOMAIN')) {
     define('PUNDS_SSO_ALLOWED_DOMAIN', 'partnerundsoehne.de');
@@ -109,21 +108,22 @@ add_action('login_form', function() {
 
 add_action('init', function() {
     // Only act if this looks like an SSO return
-    if (!isset($_GET['sso_token'], $_GET['sso_hmac'])) {
+    if (!isset($_GET['sso_token'], $_GET['sso_sig'])) {
         return;
     }
 
     $token = sanitize_text_field($_GET['sso_token']);
-    $hmac  = sanitize_text_field($_GET['sso_hmac']);
+    $sig  = sanitize_text_field($_GET['sso_sig']);
 
-    // 1. Verify the HMAC signature — ensures the token came from our relay
-    $expected_hmac = hash_hmac('sha256', $token, PUNDS_SSO_SHARED_SECRET);
-    if (!hash_equals($expected_hmac, $hmac)) {
-        wp_die(
-            'SSO-Fehler: Ungültige Signatur. Bitte versuche es erneut.',
-            'SSO Fehler',
-            ['response' => 403]
-        );
+    // 1. Verify the signature — ensures the token came from our relay
+    $valid = sodium_crypto_sign_verify_detached(
+        base64_decode($sig, true) ?: '',
+        $token,
+        base64_decode(PUNDS_SSO_PUBLIC_KEY)
+    );
+    if (!$valid) {
+        wp_die('SSO-Fehler: Ungültige Signatur. Bitte versuche es erneut.',
+            'SSO Fehler', ['response' => 403]);
     }
 
     // 2. Decode the payload
