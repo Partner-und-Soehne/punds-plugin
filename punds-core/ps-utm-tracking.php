@@ -177,21 +177,27 @@ add_action('wp_head', function() {
         // ============================================
         
         function populateHiddenFields() {
+            // Mapping direkt auf die "name"-Attribute deiner CF7 Felder
             const fieldMapping = {
-                'utm_source': trackingData.utm_source,
-                'utm_medium': trackingData.utm_medium,
-                'utm_campaign': trackingData.utm_campaign,
-                'gclid': trackingData.gclid,
-                'fbclid': trackingData.fbclid,
-                'client_id': trackingData.client_id,
-                'session_id': trackingData.session_id
+                'your-utm_source': trackingData.utm_source,
+                'your-utm_medium': trackingData.utm_medium,
+                'your-utm_campaign': trackingData.utm_campaign,
+                'your-gclid': trackingData.gclid,
+                'your-fbclid': trackingData.fbclid,
+                'your-client_id': trackingData.client_id,
+                'your-session_id': trackingData.session_id
             };
             
-            for (let fieldId in fieldMapping) {
-                const field = document.getElementById(fieldId);
-                if (field && fieldMapping[fieldId]) {
-                    field.value = fieldMapping[fieldId];
-                }
+            for (let fieldName in fieldMapping) {
+                const value = fieldMapping[fieldName];
+                
+                if (!value) continue; 
+                
+                const fields = document.querySelectorAll(`input[name="${fieldName}"]`);
+                
+                fields.forEach(field => {
+                    field.value = value;
+                });
             }
         }
         
