@@ -24,6 +24,16 @@ define('PUNDS_CORE_PATH', plugin_dir_path(__FILE__) . 'punds-core/');
 define('PUNDS_CORE_URL', plugin_dir_url(__FILE__) . 'punds-core/');
 define('PUNDS_CORE_VERSION', '1.0.4');
 
+// Plugin Update Checker
+if ( file_exists( __DIR__ . '/lib/plugin-update-checker/plugin-update-checker.php' ) ) {
+    require_once __DIR__ . '/lib/plugin-update-checker/plugin-update-checker.php';
+
+    \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/Partner-und-Soehne/punds-plugin/',
+        __FILE__,
+        'punds-plugin'
+    );
+}
 /**
  * Load all PHP files from the punds-core directory
  */
