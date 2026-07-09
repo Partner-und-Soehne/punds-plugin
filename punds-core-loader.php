@@ -3,7 +3,7 @@
  * Plugin Name:       Partner & Söhne – Core
  * Plugin URI:        https://github.com/Partner-und-Soehne/punds-plugin
  * Description:       Loads all Partner & Söhne core functionality modules.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Author:            Partner & Söhne
  * Author URI:        https://www.partnerundsoehne.de
  * License:           GPL-3.0-or-later
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 // Define constants
 define('PUNDS_CORE_PATH', plugin_dir_path(__FILE__) . 'punds-core/');
 define('PUNDS_CORE_URL', plugin_dir_url(__FILE__) . 'punds-core/');
-define('PUNDS_CORE_VERSION', '1.0.4');
+define('PUNDS_CORE_VERSION', '1.0.5');
 
 // Plugin Update Checker
 if ( file_exists( __DIR__ . '/lib/plugin-update-checker/plugin-update-checker.php' ) ) {
