@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 // Define constants
 define('PUNDS_CORE_PATH', plugin_dir_path(__FILE__) . 'punds-core/');
 define('PUNDS_CORE_URL', plugin_dir_url(__FILE__) . 'punds-core/');
-define('PUNDS_CORE_VERSION', '1.0.1');
+define('PUNDS_CORE_VERSION', '1.0.4');
 
 /**
  * Load all PHP files from the punds-core directory
