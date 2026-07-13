@@ -149,10 +149,15 @@ add_action('wp_head', function() {
 .punds-ai-label-wrap { position: relative; display: inline-block; max-width: 100%; }
 .punds-ai-label-wrap img { display: block; max-width: 100%; height: auto; }
 .punds-ai-badge {
-	position: absolute; right: .4em; bottom: .4em;
-	padding: .15em .5em; font-size: .7rem; line-height: 1.4;
-	background: rgba(0,0,0,.65); color: #fff; border-radius: .25em;
-	font-family: sans-serif; pointer-events: none;
+	position: absolute;
+    right: .75em; bottom: .75em;
+	padding: .15em .5em;
+    font-size: .7rem;
+    line-height: 1.4;
+	background: rgba(0,0,0,.65);
+    color: #fff; border-radius: .25em;
+	font-family: inherit;
+    pointer-events: none;
 }
 ');
 
