@@ -1,29 +1,35 @@
-# Partner & Söhne MU-Plugins
+# Partner & Söhne – Core
 
-Must-Use Plugins für WordPress-Websites der Partner & Söhne Kund:innen.
+WordPress-Plugin für die Websites der Partner & Söhne Kund:innen.
 
-## 📋 Übersicht
+## Übersicht
 
-Diese Sammlung von Must-Use Plugins stellt zentrale Funktionalitäten für alle WordPress-Projekte der Agentur Partner & Söhne bereit. Die Module werden automatisch geladen und benötigen keine manuelle Aktivierung.
+Dieses Plugin stellt zentrale Funktionalitäten für alle WordPress-Projekte der Agentur Partner & Söhne bereit. Es wird als reguläres Plugin über `wp-content/plugins/` installiert und über WP Umbrella verwaltet und aktualisiert (Updates zusätzlich über den GitHub Plugin Update Checker).
 
-## 🗂️ Struktur
+## Struktur
 
 ```
-MU-Plugins/
-├── punds-core-loader.php    # Haupt-Loader für alle Module
-├── punds-core/              # Core-Funktionalität
+punds-plugin/
+├── punds-core-loader.php               # Haupt-Loader für alle Module
+├── punds-core/                         # Core-Funktionalität
 │   ├── admin-footer-branding.php
+│   ├── ai-generated-image-label.php
+│   ├── ai-generated-image-label-frontend.php
 │   ├── custom-login-logo.php
 │   ├── disable-comments.php
 │   ├── duplicate-posts.php
 │   ├── e-recht24-fix.php
 │   ├── enable-svg-upload.php
+│   ├── google-sso.php
+│   ├── manage-tracking-scripts.php
 │   ├── ps-utm-tracking.php
 │   └── assets/
+│       ├── maintenance-icon.svg
+│       ├── punds_favicon.png
 │       └── punds_logo.svg
 ```
 
-## 🔌 Enthaltene Module
+## Enthaltene Module
 
 ### punds-core-loader.php
 
@@ -41,6 +47,25 @@ MU-Plugins/
 - Angepasste Hover-States und aktive Menüpunkte
 - Custom Branding im Footer-Bereich
 - Verbesserte visuelle Identität im Backend
+
+### ai-generated-image-label.php
+
+**KI-Kennzeichnung: Datenmodell & Mediathek-UI**
+
+- Checkbox "KI-generiert" für Bild-Anhänge, direkt im Mediathek-Grid-Modal und im "Datei bearbeiten"-Screen
+- Native WordPress-Felder statt ACF – funktioniert unabhängig von Drittanbieter-Plugins
+- Eigene Spalte in der Mediathek-Listenansicht
+- Filter-Dropdown zum Auditieren aller KI-markierten bzw. nicht markierten Bilder
+
+### ai-generated-image-label-frontend.php
+
+**KI-Kennzeichnung: Frontend-Ausgabe**
+
+- Automatischer Hinweis-Badge bei jedem als KI-generiert markierten Bild im Frontend
+- Erkennt Bilder sowohl über `wp_get_attachment_image()` als auch als eingebettetes `<img>` im Content (inkl. Page-Builder wie Cornerstone)
+- Styling und Wortlaut pro Website per Filter anpassbar (`punds_ai_label_text`, `punds_ai_label_css`, `punds_ai_label_wrapper_html`)
+- Shortcode `[punds_ai_label]` als manueller Fallback für als CSS-Hintergrund gesetzte Bilder
+- Notfall-Kill-Switch über `PUNDS_AI_LABEL_DISABLED` in `wp-config.php`
 
 ### custom-login-logo.php
 
@@ -88,6 +113,23 @@ MU-Plugins/
 - Korrekte Thumbnail-Anzeige in der Mediathek
 - Fallback für SVG-Dimensionen (200x200px)
 
+### google-sso.php
+
+**Login mit Google (SSO) für Agentur-Mitarbeitende**
+
+- "Login mit Google"-Button auf der WordPress-Login-Seite
+- Zugriff nur für eine konfigurierte Domain (`PUNDS_GOOGLE_CLIENT_ID`, `PUNDS_SSO_ALLOWED_DOMAIN`)
+- Erstellt bei Erstanmeldung automatisch einen Administrator-Account
+- Wird nur aktiv, wenn die nötigen Konstanten in `wp-config.php` gesetzt sind – sonst funktioniert der normale Login unverändert weiter
+
+### manage-tracking-scripts.php
+
+**Tracking-Scripts über den Admin-Bereich verwalten**
+
+- Eigene Admin-Seite zum Einfügen von Head-/Footer-Scripts (z.B. Google Tag Manager)
+- Kein Code in der `functions.php` nötig
+- Warnt, falls bereits Tracking-Code in der `functions.php` gefunden wird
+
 ### ps-utm-tracking.php
 
 **UTM-Parameter Persistenz & Contact Form 7 Integration**
@@ -99,25 +141,28 @@ MU-Plugins/
 - Referrer-Tracking und Landing Page Detection
 - Cookie-basierte Session-Persistenz
 
-## 🚀 Installation
+## Installation
 
-1. Kopiere den gesamten Ordner nach `/wp-content/mu-plugins/`
-2. Die Plugins werden automatisch geladen
+1. Ordner nach `/wp-content/plugins/punds-plugin/` kopieren
+2. Plugin über das WordPress-Backend (Plugins-Übersicht) aktivieren
 3. Keine weitere Konfiguration erforderlich
 
-## ⚙️ Voraussetzungen
+## Updates
 
-- WordPress 5.0+
-- PHP 7.4+
+Updates werden über WP Umbrella ausgerollt. Der im Plugin gebündelte GitHub Plugin Update Checker sorgt zusätzlich dafür, dass neue Releases auch direkt in der WordPress-Plugins-Übersicht als Update angezeigt werden.
+
+## Voraussetzungen
+
+- WordPress 5.9+
+- PHP 8.0+
 - Contact Form 7 (optional, für UTM-Tracking Integration)
 
-## 📝 Hinweise
+## Hinweise
 
-- **Must-Use Plugins** werden automatisch aktiviert und können nicht über das WordPress-Backend deaktiviert werden
-- Änderungen an den Dateien werden sofort wirksam
-- Für kundspezifische Anpassungen sollten separate MU-Plugins erstellt werden
+- Änderungen an den Dateien werden erst nach einem erneuten Plugin-Update wirksam
+- Für kundenspezifische Anpassungen sollten separate Plugins erstellt werden
 
-## 🔒 Sicherheit
+## Sicherheit
 
 Alle Module enthalten:
 
@@ -126,10 +171,10 @@ Alle Module enthalten:
 - Sanitization von Eingaben
 - Sichere SVG-Upload-Handhabung
 
-## 👥 Entwicklung
+## Entwicklung
 
-**Agentur:** Partner & Söhne  
-**Version:** 1.0.0  
+**Agentur:** Partner & Söhne
+**Version:** 1.1.0
 **Lizenz:** Proprietär
 
 ---
