@@ -73,27 +73,58 @@ add_filter('wp_get_attachment_image_html', function($html, $attachment_id, $size
 }, 10, 5);
 
 /**
- * Injektionspunkt 2: <img class="wp-image-{ID}">-Tags, die direkt im
- * Content stehen (z.B. über den Block-/Classic-Editor eingefügte Bilder).
+ * Ermittelt die Attachment-ID zu einem einzelnen <img>-Tag.
+ *
+ * Schneller Pfad: die vom Block-/Classic-Editor vergebene Klasse
+ * "wp-image-{ID}" (keine DB-Abfrage nötig). Page-Builder wie Cornerstone
+ * rendern Bilder aber oft ohne diese Klasse und ohne Umweg über
+ * wp_get_attachment_image() - als Fallback wird die Attachment-ID daher
+ * über die src-URL aufgelöst (attachment_url_to_postid()). Ergebnisse
+ * werden pro Request zwischengespeichert, da dieselbe URL (z.B. ein Logo)
+ * mehrfach auf einer Seite vorkommen kann.
+ */
+function punds_ai_label_get_attachment_id_from_img_tag($img_tag) {
+    if (preg_match('/\bwp-image-(\d+)\b/', $img_tag, $matches)) {
+        return (int) $matches[1];
+    }
+
+    if (!preg_match('/\bsrc=["\']([^"\']+)["\']/i', $img_tag, $matches)) {
+        return 0;
+    }
+
+    static $url_cache = array();
+    $src = $matches[1];
+
+    if (!array_key_exists($src, $url_cache)) {
+        $url_cache[$src] = (int) attachment_url_to_postid($src);
+    }
+
+    return $url_cache[$src];
+}
+
+/**
+ * Injektionspunkt 2: <img>-Tags, die direkt im Content stehen - egal ob
+ * über den Block-/Classic-Editor eingefügt (Klasse "wp-image-{ID}") oder
+ * von einem Page-Builder wie Cornerstone ohne diese Klasse gerendert
+ * (Auflösung über die src-URL, siehe punds_ai_label_get_attachment_id_from_img_tag()).
  *
  * WP_HTML_Tag_Processor kann Attribute lesen/setzen, aber keine neuen
  * Geschwister-Elemente einfügen - das Umschließen mit einem Badge braucht
- * aber genau das. Ein preg_replace_callback()-Pass gegen die von
- * WordPress selbst vergebene Klasse "wp-image-{ID}" ist deshalb der
+ * aber genau das. Ein preg_replace_callback()-Pass ist deshalb der
  * primäre (und versionsunabhängige) Mechanismus - ein seit Jahren in
  * vielen WP-Plugins (Lazy-Load, Lightbox u.ä.) etabliertes Verfahren.
  */
 add_filter('the_content', function($content) {
-    if (punds_ai_label_frontend_disabled() || strpos($content, 'wp-image-') === false) {
+    if (punds_ai_label_frontend_disabled() || stripos($content, '<img') === false) {
         return $content;
     }
 
     return preg_replace_callback(
-        '/<img\b[^>]*\bclass="[^"]*\bwp-image-(\d+)[^"]*"[^>]*>/i',
+        '/<img\b[^>]*>/i',
         function($matches) {
-            $attachment_id = (int) $matches[1];
+            $attachment_id = punds_ai_label_get_attachment_id_from_img_tag($matches[0]);
 
-            if (!punds_is_ai_generated_image($attachment_id) || !punds_ai_label_should_render($attachment_id, 'the_content')) {
+            if (!$attachment_id || !punds_is_ai_generated_image($attachment_id) || !punds_ai_label_should_render($attachment_id, 'the_content')) {
                 return $matches[0];
             }
 
