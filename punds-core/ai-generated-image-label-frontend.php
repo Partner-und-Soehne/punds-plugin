@@ -2,16 +2,17 @@
 /**
  * KI-Kennzeichnung: Frontend-Ausgabe
  *
- * Umschließt als "KI-generiert" markierte Bilder automatisch mit einem
- * Hinweis-Badge, egal ob sie über wp_get_attachment_image() (z.B. von
- * Cornerstone-Bild-Elementen) oder als eingebettetes <img> im Content
- * ausgegeben werden. Für Bilder, die nur als CSS-Hintergrund gesetzt
- * werden (kein <img>-Tag, daher nicht automatisch erkennbar), steht ein
- * manueller Shortcode/Template-Tag als Fallback zur Verfügung.
+ * Umschließt als "Mit KI bearbeitet" oder "KI-generiert" markierte Bilder
+ * automatisch mit einem Hinweis-Badge, egal ob sie über
+ * wp_get_attachment_image() (z.B. von Cornerstone-Bild-Elementen) oder als
+ * eingebettetes <img> im Content ausgegeben werden. Für Bilder, die nur als
+ * CSS-Hintergrund gesetzt werden (kein <img>-Tag, daher nicht automatisch
+ * erkennbar), steht ein manueller Shortcode/Template-Tag als Fallback zur
+ * Verfügung.
  *
  * Notfall-Kill-Switch: define('PUNDS_AI_LABEL_DISABLED', true) in
- * wp-config.php deaktiviert nur die Frontend-Ausgabe. Die Checkbox in der
- * Mediathek bleibt unverändert nutzbar.
+ * wp-config.php deaktiviert nur die Frontend-Ausgabe. Die Radio-Buttons in
+ * der Mediathek bleiben unverändert nutzbar.
  *
  * @package PundsCore
  */
@@ -26,6 +27,17 @@ if (!defined('ABSPATH')) {
  */
 function punds_ai_label_frontend_disabled() {
     return defined('PUNDS_AI_LABEL_DISABLED') && PUNDS_AI_LABEL_DISABLED;
+}
+
+/**
+ * Standard-Badge-Text je Kennzeichnungs-Typ
+ */
+function punds_ai_label_default_text($type) {
+    if ($type === 'edited') {
+        return __('Mit KI bearbeitet', 'punds-core');
+    }
+
+    return __('KI-generiert', 'punds-core');
 }
 
 /**
@@ -46,7 +58,8 @@ function punds_ai_label_wrap_image_html($image_html, $attachment_id) {
         return $image_html;
     }
 
-    $label = apply_filters('punds_ai_label_text', __('KI-generiert', 'punds-core'), $attachment_id);
+    $type  = punds_get_ai_label_type($attachment_id);
+    $label = apply_filters('punds_ai_label_text', punds_ai_label_default_text($type), $attachment_id, $type);
 
     $wrapped = sprintf(
         '<span class="punds-ai-label-wrap">%1$s<span class="punds-ai-badge">%2$s</span></span>',
@@ -65,7 +78,7 @@ add_filter('wp_get_attachment_image_html', function($html, $attachment_id, $size
         return $html;
     }
 
-    if (!punds_is_ai_generated_image($attachment_id) || !punds_ai_label_should_render($attachment_id, 'wp_get_attachment_image')) {
+    if (punds_get_ai_label_type($attachment_id) === '' || !punds_ai_label_should_render($attachment_id, 'wp_get_attachment_image')) {
         return $html;
     }
 
@@ -124,7 +137,7 @@ add_filter('the_content', function($content) {
         function($matches) {
             $attachment_id = punds_ai_label_get_attachment_id_from_img_tag($matches[0]);
 
-            if (!$attachment_id || !punds_is_ai_generated_image($attachment_id) || !punds_ai_label_should_render($attachment_id, 'the_content')) {
+            if (!$attachment_id || punds_get_ai_label_type($attachment_id) === '' || !punds_ai_label_should_render($attachment_id, 'the_content')) {
                 return $matches[0];
             }
 
@@ -178,15 +191,23 @@ function punds_get_ai_label_badge($args = array()) {
         'id'    => 0,
         'force' => false,
         'label' => '',
+        'type'  => '',
     ));
 
     $attachment_id = (int) $args['id'];
+    $type          = $args['type'] !== '' ? punds_sanitize_ai_label_type($args['type']) : punds_get_ai_label_type($attachment_id);
 
-    if (!$args['force'] && (!$attachment_id || !punds_is_ai_generated_image($attachment_id) || !punds_ai_label_should_render($attachment_id, 'manual'))) {
+    if (!$args['force'] && (!$attachment_id || $type === '' || !punds_ai_label_should_render($attachment_id, 'manual'))) {
         return '';
     }
 
-    $label = $args['label'] !== '' ? $args['label'] : apply_filters('punds_ai_label_text', __('KI-generiert', 'punds-core'), $attachment_id);
+    // Manuelle Platzierung ohne erkennbaren Typ (z.B. force ohne echtes
+    // Attachment) entspricht dem historischen Verhalten vor den Radio-Buttons.
+    if ($type === '') {
+        $type = 'generated';
+    }
+
+    $label = $args['label'] !== '' ? $args['label'] : apply_filters('punds_ai_label_text', punds_ai_label_default_text($type), $attachment_id, $type);
 
     return sprintf('<span class="punds-ai-badge punds-ai-badge--standalone">%s</span>', esc_html($label));
 }
@@ -200,11 +221,13 @@ add_shortcode('punds_ai_label', function($atts) {
         'id'    => 0,
         'force' => '0',
         'label' => '',
+        'type'  => '',
     ), $atts, 'punds_ai_label');
 
     return punds_get_ai_label_badge(array(
         'id'    => $atts['id'],
         'force' => (bool) $atts['force'],
         'label' => $atts['label'],
+        'type'  => $atts['type'],
     ));
 });

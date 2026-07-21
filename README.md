@@ -52,19 +52,20 @@ punds-plugin/
 
 **KI-Kennzeichnung: Datenmodell & Mediathek-UI**
 
-- Checkbox "KI-generiert" für Bild-Anhänge, direkt im Mediathek-Grid-Modal und im "Datei bearbeiten"-Screen
+- Gegenseitig ausschließende Radio-Buttons "Mit KI bearbeitet" / "KI-generiert" / "Keine Kennzeichnung" für Bild-Anhänge, direkt im Mediathek-Grid-Modal und im "Datei bearbeiten"-Screen
 - Native WordPress-Felder statt ACF – funktioniert unabhängig von Drittanbieter-Plugins
 - Eigene Spalte in der Mediathek-Listenansicht
-- Filter-Dropdown zum Auditieren aller KI-markierten bzw. nicht markierten Bilder
+- Filter-Dropdown zum Auditieren nach KI-generierten, KI-bearbeiteten bzw. nicht markierten Bildern
+- Bestehende Kennzeichnungen aus der früheren Checkbox-Version werden automatisch als "KI-generiert" interpretiert (kein manueller Migrationsschritt nötig)
 
 ### ai-generated-image-label-frontend.php
 
 **KI-Kennzeichnung: Frontend-Ausgabe**
 
-- Automatischer Hinweis-Badge bei jedem als KI-generiert markierten Bild im Frontend
+- Automatischer Hinweis-Badge (passender Text je nach Kennzeichnung) bei jedem markierten Bild im Frontend
 - Erkennt Bilder sowohl über `wp_get_attachment_image()` als auch als eingebettetes `<img>` im Content (inkl. Page-Builder wie Cornerstone)
 - Styling und Wortlaut pro Website per Filter anpassbar (`punds_ai_label_text`, `punds_ai_label_css`, `punds_ai_label_wrapper_html`)
-- Shortcode `[punds_ai_label]` als manueller Fallback für als CSS-Hintergrund gesetzte Bilder
+- Shortcode `[punds_ai_label]` als manueller Fallback für als CSS-Hintergrund gesetzte Bilder (optionales `type`-Attribut: `edited` oder `generated`)
 - Notfall-Kill-Switch über `PUNDS_AI_LABEL_DISABLED` in `wp-config.php`
 
 ### custom-login-logo.php
