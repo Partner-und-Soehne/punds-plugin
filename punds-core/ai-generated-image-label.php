@@ -117,7 +117,7 @@ add_filter('attachment_fields_to_edit', function($form_fields, $post) {
     $html = '';
     foreach ($options as $value => $label) {
         $html .= sprintf(
-            '<label style="display:block;"><input type="radio" name="%1$s" value="%2$s" %3$s style="margin: 0 !important;"> %4$s</label>',
+            '<label style="display:block;margin-top: .25rem;"><input type="radio" name="%1$s" value="%2$s" %3$s style="margin-top:0!important;margin-left: 0!important; margin-right:.25rem!important;margin-bottom:0!important;"> %4$s</label>',
             esc_attr($name),
             esc_attr($value),
             checked($current, $value, false),
